@@ -1,0 +1,258 @@
+/* ============================================================
+   Riley Hill — Protection & Control + Renewables portfolio
+   styles.css · design tokens + base + nav + hero
+   ============================================================ */
+
+/* 1. DESIGN TOKENS — the single source of the whole site */
+:root {  /* top of document */
+  /* neutrals — control-room graphite */
+  --bg:        #0a0e14;
+  --surface:   #121822;
+  --surface-2: #1a212d;
+  --line:      #26303d;
+  --text:      #e8ecf2;
+  --muted:     #8b97a8;
+
+  /* niche accents — the color language specializations */
+  --maroon:    #500000;   /* A&M brand — deep fills */
+  --maroon-hi: #b3243f;   /* readable maroon = PROTECTION & CONTROL */
+  --renew:     #ffb82e;   /* amber     = RENEWABLES INTEGRATION */
+
+  /* typefaces */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* spacing + rhythm */
+  --space-section: clamp(4rem, 9vw, 7rem);
+  --content-max:   1140px;
+  --radius:        10px;
+}
+
+/* 2. RESET — sane defaults across browsers */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { scroll-behavior: smooth; }
+img, svg { display: block; max-width: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3. BASE TYPOGRAPHY */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+a { color: inherit; text-decoration: none; }
+
+.container { width: min(100% - 2.5rem, var(--content-max)); margin-inline: auto; }
+
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* 4. NAV — sticky, translucent, hairline underline */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.nav__inner { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+.nav__brand { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+.nav__brand span { color: var(--maroon-hi); }
+.nav__links { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+.nav__links a {
+  font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); transition: color .18s ease;
+}
+.nav__links a:hover { color: var(--text); }
+
+/* 5. BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-mono); font-size: .78rem;
+  letter-spacing: .04em; text-transform: uppercase;
+  padding: .7rem 1.1rem; border-radius: var(--radius);
+  border: 1px solid var(--line); color: var(--text);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn--primary { background: var(--maroon); border-color: var(--maroon-hi); }
+.btn--primary:hover { background: var(--maroon-hi); }
+.btn--ghost:hover { border-color: var(--muted); background: var(--surface); }
+
+/* 6. HERO */
+.hero { padding-block: clamp(3.5rem, 8vw, 6rem) var(--space-section); }
+.hero__inner {
+  display: grid; grid-template-columns: 1.1fr .9fr;
+  gap: clamp(2rem, 5vw, 4rem); align-items: center;
+}
+.hero__kicker { margin-bottom: 1.1rem; }
+.hero h1 { font-size: clamp(2.2rem, 5.2vw, 3.6rem); margin-bottom: 1.2rem; }
+.hero h1 .accent { color: var(--renew); }
+.hero__sub { color: var(--muted); max-width: 46ch; margin-bottom: 1.8rem; }
+.cta-row { display: flex; gap: .8rem; flex-wrap: wrap; }
+
+.pills { display: flex; gap: .6rem; margin-top: 1.6rem; flex-wrap: wrap; }
+.pill {
+  font-family: var(--font-mono); font-size: .68rem;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: .35rem .7rem; border-radius: 999px; border: 1px solid var(--line);
+}
+.pill--pc    { color: var(--maroon-hi); border-color: color-mix(in srgb, var(--maroon-hi) 45%, var(--line)); }
+.pill--renew { color: var(--renew);     border-color: color-mix(in srgb, var(--renew) 45%, var(--line)); }
+
+/* hero one-line diagram panel */
+.oneline { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
+.ol-bus  { stroke: var(--text);  stroke-width: 2; }
+.ol-line { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+.ol-node { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.ol-hot  { stroke: var(--maroon-hi); }
+.ol-flow { stroke: var(--renew); stroke-width: 2; fill: none; stroke-dasharray: 4 6; }
+.ol-label{ fill: var(--muted); font-family: var(--font-mono); font-size: 9px; letter-spacing: .06em; }
+
+/* 7. SECTION SCAFFOLD + the HMI "status LED" label */
+.section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+.section__label { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.4rem; }
+.section__label::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--maroon-hi);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--maroon-hi) 70%, transparent);
+}
+.section h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+
+/* 8. RESPONSIVE */
+@media (max-width: 760px) {
+  .hero__inner { grid-template-columns: 1fr; }
+  .oneline { order: -1; }
+  .nav__links { gap: .9rem; }
+}
+
+/* 9. ACCESSIBILITY FLOOR */
+:focus-visible { outline: 2px solid var(--renew); outline-offset: 3px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+/* 10. PROJECT CARDS */
+.section__intro { color: var(--muted); max-width: 60ch; margin-top: .6rem; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* two equal columns */
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.card {
+  --accent: var(--maroon-hi);              /* per-card niche color; a default */
+  display: flex; flex-direction: column;   /* stack contents vertically */
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.card--pc    { --accent: var(--maroon-hi); }   /* Protection & Control */
+.card--renew { --accent: var(--renew); }       /* Renewables Integration */
+.card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+
+.card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+
+.tag {
+  font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .3rem .6rem; border-radius: 999px;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.status { display: inline-flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+.status--done::before { background: var(--text); }              /* filled = complete */
+.status--wip::before  { border: 1.5px solid var(--muted); }     /* hollow = in progress */
+.status--planned::before { background: var(--line); }   /* faint filled dot = planned/future */
+
+.card h3 { font-size: 1.25rem; margin-bottom: .5rem; }
+.card__desc { color: var(--muted); font-size: .95rem; margin-bottom: 1rem; }
+
+.card__tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.1rem; }
+.chip { font-family: var(--font-mono); font-size: .62rem; color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: .25rem .5rem; }
+
+.card__result { padding: .8rem; background: var(--surface-2); border-left: 2px solid var(--accent); border-radius: 6px; margin-bottom: 1.2rem; }
+.card__result .metric { display: block; font-family: var(--font-mono); color: var(--text); font-size: .95rem; }
+.card__result .metric-label { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+.card__links { margin-top: auto; display: flex; gap: 1.2rem; align-items: center; }
+.card__links a { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--text); transition: color .18s ease; }
+.card__links a:hover { color: var(--accent); }
+.card__links .secondary { color: var(--muted); }
+
+@media (max-width: 760px) { .projects-grid { grid-template-columns: 1fr; } }
+
+
+/* 11. CAPSTONES — the featured tier */
+.capstones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+.capstone {
+  --accent: var(--maroon-hi);              /* local niche token, same trick as .card */
+  position: relative;                      /* anchor for the accent bar below */
+  overflow: hidden;                        /* clip the bar to the rounded corners */
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.capstone--pc     { --accent: var(--maroon-hi); }
+.capstone--bridge { --accent: var(--renew); }
+
+/* the accent bar across the top — this is what elevates a capstone above a card */
+.capstone::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent);
+}
+.capstone--bridge::before {
+  background: linear-gradient(90deg, var(--maroon-hi), var(--renew));  /* the fusion */
+}
+
+.capstone__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .9rem; }
+.capstone__eyebrow { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.capstone h3 { font-size: 1.6rem; margin-bottom: .7rem; }
+.capstone__desc { color: var(--muted); margin-bottom: 1.3rem; }
+
+.capstone__scope {
+  display: flex; gap: 1.6rem; flex-wrap: wrap;
+  padding-block: 1rem; margin-bottom: 1.4rem;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.capstone__scope div { display: flex; flex-direction: column; }
+.capstone__scope .n { font-family: var(--font-display); font-size: 1.15rem; color: var(--text); }
+.capstone__scope .l { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: .2rem; }
+
+.capstone__links { margin-top: auto; display: flex; gap: 1.2rem; }
+.capstone__links a { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--text); transition: color .18s ease; }
+.capstone__links a:hover { color: var(--accent); }
+
+@media (max-width: 760px) { .capstones { grid-template-columns: 1fr; } }
