@@ -11,6 +11,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- turns on scroll-reveal without hiding content if JS is disabled -->
+  <script>document.documentElement.classList.add('js');</script>
+
+  <!-- link preview + favicon -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Riley Hill — Protection & Control · Renewables Integration">
+  <meta property="og:description" content="Texas A&M electrical engineering senior building protection & control and renewables-integration projects: relay firmware, coordination and arc-flash studies, SCADA.">
+  <meta property="og:image" content="https://rileyhill625.github.io/assets/og-image.png">
+  <meta property="og:url" content="https://rileyhill625.github.io/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -309,17 +321,82 @@
     <section id="skills" class="section container">
       <div class="section__label"><span class="mono">Skills &amp; Standards</span></div>
       <h2>The standards this work is built on.</h2>
+      <p class="section__intro">Not a keyword list — every item below is something I've actually used to produce the work on this site.</p>
+
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>Protection Standards</h3>
+          <div class="chips">
+            <span class="chip">IEC 60255</span><span class="chip">IEC 60909</span><span class="chip">IEEE 1584</span><span class="chip">NFPA 70E</span><span class="chip">IEEE C37.112</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Power-System Analysis</h3>
+          <div class="chips">
+            <span class="chip">Load flow (Newton-Raphson)</span><span class="chip">Short-circuit</span><span class="chip">Device coordination</span><span class="chip">Arc-flash</span><span class="chip">pandapower</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>SCADA &amp; Protocols</h3>
+          <div class="chips">
+            <span class="chip">Modbus TCP</span><span class="chip">DNP3</span><span class="chip">pymodbus</span><span class="chip">Historian logging</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Programming</h3>
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">C / C++</span><span class="chip">Embedded firmware</span><span class="chip">NumPy · matplotlib · pandas</span><span class="chip">HTML · CSS · JS</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Hardware &amp; Instrumentation</h3>
+          <div class="chips">
+            <span class="chip">Current sensing (INA219)</span><span class="chip">Opto-isolated relays</span><span class="chip">DAC · op-amp · MOSFET</span><span class="chip">Oscilloscope</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Industry Software</h3>
+          <div class="chips">
+            <span class="chip">ETAP</span><span class="chip">Git / GitHub</span>
+            <!-- Add these only once you can speak to them: SEL AcSELerator, Ignition, KiCad -->
+          </div>
+        </div>
+      </div>
+
+      <div class="section__label" style="margin-top:2.6rem;"><span class="mono">Certifications</span></div>
+      <div class="chips">
+        <span class="chip">FE — Electrical &amp; Computer (passed Apr 2026)</span>
+        <!-- Add only certs you've actually earned: SEL CBT 101, SEL eSW 101, Ignition credential, etc. -->
+      </div>
     </section>
 
-    <section id="about" class="section container">
+    <section id="about" class="section container reveal">
       <div class="section__label"><span class="mono">About</span></div>
       <h2>Why power, and why both.</h2>
+      <div class="prose">
+        <p><em>[Placeholder — rewrite in your own voice.]</em> I'm an electrical engineering senior at Texas A&amp;M focused on the two areas of power engineering I find both the most in demand and the most interesting: protection &amp; control, and renewables integration. What pulls me toward protection is that it's where the physics gets real — a relay either clears a fault correctly or it doesn't, and the difference is measured in cycles.</p>
+        <p><em>[Placeholder.]</em> Most of the work on this site is self-directed — projects I scoped and built to understand how the grid is actually protected and how renewables change that picture, from firmware on a real relay to coordination studies to the communication layer that ties a substation together. I passed the FE in April 2026 and I'm aiming for a full-time P&amp;C role after I graduate in May 2027.</p>
+      </div>
+      <div class="spec-grid" style="margin-top:1.6rem;">
+        <div class="spec"><span class="k">Program</span><span class="v">BS Electrical Engineering · Texas A&amp;M</span></div>
+        <div class="spec"><span class="k">Graduating</span><span class="v">May 2027</span></div>
+        <div class="spec"><span class="k">Focus</span><span class="v">Protection &amp; Control · Renewables Integration</span></div>
+        <div class="spec"><span class="k">Licensure</span><span class="v">FE (Electrical &amp; Computer) — Apr 2026</span></div>
+      </div>
     </section>
 
-    <section id="contact" class="section container">
+    <section id="contact" class="section container reveal">
       <div class="section__label"><span class="mono">Contact</span></div>
-      <h2>Let's talk.</h2>
+      <h2>Let's talk protection.</h2>
+      <p class="section__intro">Open to full-time protection &amp; control and renewables-integration roles starting May 2027, and to internships before then.</p>
+      <div class="cta-row" style="margin-top:1.4rem;">
+        <a class="btn btn--primary" href="mailto:YOUR_EMAIL">Email me</a>
+        <a class="btn btn--ghost" href="https://www.linkedin.com/in/YOUR_HANDLE">LinkedIn ↗</a>
+        <a class="btn btn--ghost" href="https://github.com/rileyhill625">GitHub ↗</a>
+        <a class="btn btn--ghost" href="assets/resume.pdf">Résumé ↗</a>
+      </div>
     </section>
+    
   </main>
 
 </body>

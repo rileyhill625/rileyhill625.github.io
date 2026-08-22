@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distribution Feeder Protection Study — Riley Hill</title>
+  <meta name="description" content="A short-circuit, protective device coordination, and IEEE 1584 arc-flash study on a 12.47 kV distribution feeder, built in Python." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <nav class="nav__links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Protection &amp; Control</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>Distribution Feeder Protection Study</h1>
+      <p class="detail-hero__lead">The three analyses a protection engineer delivers for a distribution feeder — short-circuit, protective device coordination, and arc-flash hazard — carried out on a modeled 12.47 kV feeder, implemented from the governing equations in Python.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>Protective device coordination and arc-flash studies are among the first tasks handed to a junior protection engineer, and they appear on nearly every P&amp;C job posting. This study performs all three core analyses directly from the underlying standards — the IDMT trip characteristic and the incident-energy model implemented in code rather than driven through a GUI — to demonstrate an understanding of <em>what</em> the analysis software computes, not just how to operate it.</p>
+      </div>
+    </section>
+
+    <!-- ============ THE MODELED FEEDER ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">The modeled feeder</span></div>
+      <div class="prose">
+        <p>A 12.47 kV feeder with a three-device protection hierarchy: a main breaker at the substation, a recloser on the main line, and a fuse protecting a lateral tap. Each device sits at its own bus, so the fault current <em>at that device's location</em> can be computed and used to set its protection.</p>
+      </div>
+      <div class="oneline">
+        <svg viewBox="0 0 660 175" role="img" aria-label="Single-line diagram of a 12.47 kV feeder: source, main breaker, Bus A at 10.3 kA, a 2.0 km line to a recloser at Bus B at 4.79 kA, a 1.5 km line to a fuse at Bus C at 3.39 kA, then the lateral load">
+          <!-- source -->
+          <circle class="ol-node ol-hot" cx="44" cy="70" r="15"/>
+          <text class="ol-label" x="44" y="102" text-anchor="middle">SOURCE</text>
+          <line class="ol-line ol-hot" x1="59" y1="70" x2="112" y2="70"/>
+          <!-- main breaker -->
+          <rect class="ol-node ol-hot" x="112" y="62" width="16" height="16"/>
+          <text class="ol-label" x="120" y="102" text-anchor="middle">BREAKER 52</text>
+          <line class="ol-line ol-hot" x1="128" y1="70" x2="185" y2="70"/>
+          <!-- BUS A -->
+          <line class="ol-bus" x1="185" y1="45" x2="185" y2="95"/>
+          <text class="ol-label" x="185" y="38" text-anchor="middle">BUS A</text>
+          <text class="ol-label" x="185" y="115" text-anchor="middle">10.3 kA</text>
+          <!-- 2.0 km span -->
+          <line class="ol-line" x1="185" y1="70" x2="340" y2="70"/>
+          <text class="ol-label" x="262" y="60" text-anchor="middle">2.0 km</text>
+          <!-- recloser + BUS B -->
+          <circle class="ol-node" cx="318" cy="70" r="10"/>
+          <text class="ol-label" x="318" y="46" text-anchor="middle">RECLOSER</text>
+          <line class="ol-bus" x1="340" y1="45" x2="340" y2="95"/>
+          <text class="ol-label" x="340" y="115" text-anchor="middle">BUS B · 4.79 kA</text>
+          <!-- 1.5 km span -->
+          <line class="ol-line" x1="340" y1="70" x2="490" y2="70"/>
+          <text class="ol-label" x="415" y="60" text-anchor="middle">1.5 km</text>
+          <!-- fuse + BUS C -->
+          <rect class="ol-node" x="464" y="62" width="11" height="16" rx="2"/>
+          <text class="ol-label" x="470" y="46" text-anchor="middle">FUSE</text>
+          <line class="ol-bus" x1="490" y1="45" x2="490" y2="95"/>
+          <text class="ol-label" x="490" y="115" text-anchor="middle">BUS C · 3.39 kA</text>
+          <!-- load -->
+          <line class="ol-line" x1="490" y1="70" x2="562" y2="70"/>
+          <path class="ol-line" d="M562 60 l18 10 l-18 10 z" fill="#8b97a8"/>
+          <text class="ol-label" x="582" y="102" text-anchor="middle">LOAD</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ METHOD ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">The three analyses</span></div>
+      <div class="prose">
+        <ol>
+          <li><strong>Short-circuit (IEC 60909).</strong> Maximum three-phase fault current at every bus. Current is highest near the source and falls down the feeder as line impedance accumulates — the physical basis for time-graded coordination.</li>
+          <li><strong>Coordination (IEC 60255).</strong> Each device gets an inverse-time characteristic with a staggered time-multiplier, so for any fault the nearest device trips first while upstream devices hold back as backup. Verified against a ~0.3 s coordination time interval (CTI).</li>
+          <li><strong>Arc-flash (IEEE 1584 / NFPA 70E).</strong> Using each device's clearing time, incident energy is estimated and mapped to an NFPA 70E PPE category. Because energy scales with arc duration, faster clearing means lower hazard — so the coordination design directly determines worker safety.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ COORDINATION ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Coordination</span></div>
+      <div class="prose">
+        <p>Every device follows the IEC 60255 standard-inverse characteristic, with pickup set above load and the time multiplier staggered to grade the devices in time:</p>
+        <div class="equation">t = TMS &times; k / ( (I / I<sub>pickup</sub>)<sup>a</sup> &minus; 1 )</div>
+      </div>
+
+      <div class="code-block">
+        <div class="cap">
+          <span>01-feeder-model.ipynb — trip characteristic</span>
+          <a href="https://github.com/rileyhill625/etap-feeder-study">Full notebook ↗</a>
+        </div>
+        <pre><code>def trip_time(I_fault, I_pickup, TMS, k=0.14, a=0.02):
+    # IEC 60255 standard-inverse IDMT trip time (seconds)
+    M = I_fault / I_pickup          # multiple of pickup
+    return TMS * (k / (M**a - 1))</code></pre>
+      </div>
+
+      <div class="prose">
+        <p>Plotting all three device curves across the full fault-current range shows them cleanly stacked and separated — fuse fastest, breaker slowest — never touching, which is the proof of coordination. The marker on each curve is where that device actually clears its own bus fault.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/tcc-coordination.png" alt="Time-current coordination plot: three IEC standard-inverse curves for the fuse, recloser, and main breaker, cleanly separated across the fault-current range, with a marker on each at its operating point">
+        <figcaption>Time-current coordination curves — the three characteristics never cross</figcaption>
+      </figure>
+
+      <div class="prose">
+        <p>Reading the coordination at a fault on the lateral (Bus C, 3.39 kA), each upstream device holds back from the one below it by more than the 0.3 s CTI — so only the faulted section is de-energized:</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Device</th><th>Trips at</th><th>Gap to next device</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Fuse (Bus C)</td><td class="num">0.10 s</td><td class="num">—</td><td>Primary — clears first</td></tr>
+          <tr><td>Recloser (Bus B)</td><td class="num">0.44 s</td><td class="num">+0.34 s</td><td>Backup</td></tr>
+          <tr><td>Main Breaker (Bus A)</td><td class="num">0.96 s</td><td class="num">+0.53 s</td><td>Backup of last resort</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ ARC-FLASH HAZARD ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Arc-flash hazard</span></div>
+      <div class="prose">
+        <p>Applying the IEEE 1584 incident-energy model with each device's clearing time gives the hazard and required PPE at every location. The full study — fault current, clearing device, clearing time, incident energy, and PPE category:</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Location</th><th>Fault current</th><th>Clearing device</th><th>Clearing time</th><th>Incident energy</th><th>PPE</th></tr></thead>
+        <tbody>
+          <tr><td>Bus A</td><td class="num">10.28 kA</td><td>Main breaker</td><td class="num">0.68 s</td><td class="num">3.06 cal/cm²</td><td class="num">1</td></tr>
+          <tr><td>Bus B</td><td class="num">4.79 kA</td><td>Recloser</td><td class="num">0.39 s</td><td class="num">0.81 cal/cm²</td><td class="num">0</td></tr>
+          <tr><td>Bus C</td><td class="num">3.39 kA</td><td>Fuse</td><td class="num">0.10 s</td><td class="num">0.14 cal/cm²</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+      <div class="prose">
+        <p><strong>The key insight:</strong> the fuse's fast operation delivers two payoffs from one coordination decision — selectivity (only the faulted lateral drops) and safety (far lower arc-flash energy). Where the breaker clears the highest fault it also produces the highest incident energy, because energy scales with arc duration.</p>
+        <p style="font-size:.88rem;">Note: the arc-flash calculation uses a simplified incident-energy model that captures the governing drivers — arcing current, arc duration, working distance — and produces realistic magnitudes. It demonstrates the IEEE 1584 method; it is not a certified arc-flash study.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & STANDARDS ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Short-circuit</span><span class="v">IEC 60909</span></div>
+        <div class="spec"><span class="k">Coordination</span><span class="v">IEC 60255 / IEEE C37.112</span></div>
+        <div class="spec"><span class="k">Arc-flash</span><span class="v">IEEE 1584 · NFPA 70E</span></div>
+        <div class="spec"><span class="k">Modeling</span><span class="v">pandapower · NumPy</span></div>
+        <div class="spec"><span class="k">Analysis</span><span class="v">Python 3.11 (pcenv)</span></div>
+        <div class="spec"><span class="k">Plotting</span><span class="v">matplotlib · pandas</span></div>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>The complete Jupyter notebook — network model, short-circuit analysis, coordination, TCC plot, and arc-flash calculation, runnable top to bottom — plus the results CSV are in the repository.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/etap-feeder-study">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

@@ -256,3 +256,94 @@ a { color: inherit; text-decoration: none; }
 .capstone__links a:hover { color: var(--accent); }
 
 @media (max-width: 760px) { .capstones { grid-template-columns: 1fr; } }
+
+/* 12. PROJECT DETAIL PAGES */
+.detail-hero { --accent: var(--maroon-hi); padding-block: 2.5rem 1rem; }
+/* for a renewables detail page, put style="--accent: var(--renew)" on its <main> */
+
+.back-link { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: inline-flex; gap: .4rem; margin-bottom: 1.5rem; transition: color .18s ease; }
+.back-link:hover { color: var(--text); }
+.detail-hero__meta { display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+.detail-hero h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); margin-bottom: .8rem; }
+.detail-hero__lead { color: var(--muted); font-size: 1.1rem; max-width: 62ch; }
+
+.block { padding-block: 2.5rem; border-top: 1px solid var(--line); }
+.prose { max-width: 68ch; }
+.prose p { color: var(--muted); margin-bottom: 1rem; }
+.prose ol { color: var(--muted); margin: 0 0 1rem 1.2rem; }
+.prose li { margin-bottom: .6rem; }
+.prose li strong { color: var(--text); }
+
+.equation { font-family: var(--font-mono); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.2rem; color: var(--text); text-align: center; margin: 1.3rem 0; font-size: 1.05rem; }
+
+/* data tables */
+.data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: .93rem; }
+.data-table th { text-align: left; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: .6rem .8rem; border-bottom: 1px solid var(--line); }
+.data-table td { padding: .7rem .8rem; border-bottom: 1px solid var(--line); color: var(--text); }
+.data-table .num { font-family: var(--font-mono); }
+.data-table tr:hover td { background: var(--surface); }
+
+/* hardware spec grid */
+.spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin-top: 1rem; }
+.spec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
+.spec .k { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: .35rem; }
+.spec .v { color: var(--text); }
+
+/* interactive trip curve */
+.curve-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; margin-top: 1rem; }
+.curve-controls { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.control { display: flex; flex-direction: column; gap: .5rem; min-width: 220px; }
+.control label { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+.control label .val { color: var(--renew); }
+.control input[type="range"] { width: 100%; accent-color: var(--maroon-hi); }
+.curve-svg { width: 100%; height: auto; background: var(--bg); border-radius: 6px; }
+.curve-axis   { stroke: var(--line); stroke-width: 1; }
+.curve-grid   { stroke: color-mix(in srgb, var(--line) 55%, transparent); stroke-width: .5; }
+.curve-path   { stroke: var(--maroon-hi); stroke-width: 2.5; fill: none; }
+.curve-point  { fill: var(--renew); stroke: var(--bg); stroke-width: 2; }
+.curve-label  { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.curve-pickup { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4; }
+
+@media (max-width: 760px) { .spec-grid { grid-template-columns: 1fr; } }
+
+/* 13. MEDIA + CODE (detail pages) */
+.figure { margin-top: 1.2rem; }
+.figure--md { max-width: 760px; }
+.figure--sm { max-width: 400px; }
+.figure img, .figure video { width: 100%; display: block; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+.figure figcaption { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: .5rem; }
+
+.code-block { margin-top: 1rem; max-width: 760px; }
+.code-block .cap { display: flex; justify-content: space-between; align-items: center; margin-bottom: .55rem; }
+.code-block .cap span { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.code-block .cap a { font-family: var(--font-mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--maroon-hi); }
+.code-block pre { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; overflow-x: auto; }
+.code-block code { font-family: var(--font-mono); font-size: .82rem; line-height: 1.7; color: var(--text); white-space: pre; }
+
+/* 14. SKILLS */
+.chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+.skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; margin-top: 1.8rem; }
+.skill-group { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; }
+.skill-group h3 { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: .9rem; }
+@media (max-width: 760px){ .skills-grid { grid-template-columns: 1fr; } }
+
+/* 15. POLISH — scroll reveal, hero current flow, footer */
+
+/* Scroll reveal. Scoped to .js so the page still shows everything if JS is off. */
+.js .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+/* Flowing current on the hero feeder conductor */
+@keyframes current-flow { to { stroke-dashoffset: -140; } }
+.ol-flow { stroke-dasharray: 6 8; animation: current-flow 2.5s linear infinite; }
+
+/* Footer */
+.footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding-block: 2rem; border-top: 1px solid var(--line); color: var(--muted); }
+.footer a { color: var(--muted); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; transition: color .18s ease; }
+.footer a:hover { color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .ol-flow { animation: none; }
+}

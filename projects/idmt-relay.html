@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDMT Overcurrent Relay — Riley Hill</title>
+  <meta name="description" content="A microprocessor-based IEC 60255 inverse-time overcurrent relay, built in hardware and validated on the bench." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <nav class="nav__links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Protection &amp; Control</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>IDMT Overcurrent Relay</h1>
+      <p class="detail-hero__lead">A working microprocessor-based inverse-time overcurrent relay — a current sensor, a microcontroller, and firmware implementing an IEC 60255 trip curve that senses real current and physically opens a contact to disconnect a load on a fault.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>The overcurrent relay is the most fundamental protective device in a power system. This project implements one from the governing equation up: the same IEC 60255 inverse-time characteristic used to coordinate protective devices and set relay pickup in coordination studies — running here on real hardware, sensing real current.</p>
+        <p>It demonstrates protection at the device level. Not analyzed in software, but built, and physically validated on the bench.</p>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">How it works</span></div>
+      <div class="prose">
+        <ol>
+          <li><strong>Sense.</strong> The INA219 measures load current and reports it to the microcontroller over I²C.</li>
+          <li><strong>Compare.</strong> Below pickup, the relay stays idle. Above pickup, it enters a timing state.</li>
+          <li><strong>Time (IDMT).</strong> The firmware computes the inverse-time trip delay for the measured current and integrates progress toward a trip each loop — so it keeps monitoring while timing, and backs off if the fault clears first.</li>
+          <li><strong>Trip.</strong> When accumulated time reaches the computed delay, the relay latches and drives an opto-isolated relay module to open its contact and disconnect the load — a real breaker action, not just an indicator.</li>
+          <li><strong>Reset.</strong> Once current returns below pickup, the relay resets and re-arms.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ DEMONSTRATION ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Demonstration</span></div>
+      <div class="prose"><p>The relay sensing an overcurrent and physically opening its contact to disconnect the load — the full sense → decide → trip chain, on hardware.</p></div>
+      <figure class="figure figure--md">
+        <video controls preload="none" poster="../assets/relay-trip-poster.jpg">
+          <source src="../assets/relay-trip-demo.mp4" type="video/mp4">
+          Your browser can't play embedded video — the clip is in the repository.
+        </video>
+        <figcaption>Live trip — the relay module opens on an overcurrent fault</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ TRIP CHARACTERISTIC + INTERACTIVE CURVE ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Trip characteristic</span></div>
+      <div class="prose">
+        <p>The trip time follows the IEC 60255 standard-inverse curve — larger overcurrents trip faster, smaller ones trip slower:</p>
+        <div class="equation">t = TMS &times; k / ( (I / I<sub>pickup</sub>)<sup>a</sup> &minus; 1 )</div>
+        <p>Drag the time multiplier below and watch the curve shift. The amber points are the measured hardware results — at the relay's actual setting (TMS = 0.10) the theoretical curve runs right through them.</p>
+      </div>
+
+      <div class="curve-panel">
+        <div class="curve-controls">
+          <div class="control">
+            <label for="tms">Time Multiplier (TMS) <span class="val" id="tms-val">0.10</span></label>
+            <input type="range" id="tms" min="0.05" max="0.30" step="0.01" value="0.10">
+          </div>
+        </div>
+        <svg id="curve" class="curve-svg" viewBox="0 0 600 400" role="img"
+             aria-label="IEC 60255 inverse-time trip curve with three measured hardware validation points"></svg>
+      </div>
+    </section>
+
+    <!-- ============ RELAY SETTINGS ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Relay settings</span></div>
+      <table class="data-table">
+        <thead><tr><th>Setting</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Pickup (I<sub>pickup</sub>)</td><td class="num">100 mA</td><td>Threshold above which the relay times toward a trip</td></tr>
+          <tr><td>Time multiplier (TMS)</td><td class="num">0.10</td><td>Shifts the trip curve up or down in time</td></tr>
+          <tr><td>Curve constants</td><td class="num">k = 0.14, a = 0.02</td><td>IEC 60255 standard-inverse characteristic</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ VALIDATION RESULTS ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Validation results</span></div>
+      <div class="prose"><p>Tested across the full range of the trip characteristic. Trip time falling as current rises is the inverse-time behavior that defines an IDMT relay — confirmed on hardware.</p></div>
+      <table class="data-table">
+        <thead><tr><th>Condition</th><th>Measured current</th><th>Trip time</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Normal load</td><td class="num">&lt; 100 mA</td><td class="num">—</td><td>No trip (correctly ignored)</td></tr>
+          <tr><td>Small overcurrent</td><td class="num">103 mA</td><td class="num">~20 s</td><td>Slow trip (near-pickup asymptote)</td></tr>
+          <tr><td>Moderate overcurrent</td><td class="num">134 mA</td><td class="num">~2.4 s</td><td>Faster trip</td></tr>
+          <tr><td>Large fault</td><td class="num">192 mA</td><td class="num">~1.1 s</td><td>Fast trip</td></tr>
+        </tbody>
+      </table>
+      <figure class="figure figure--md">
+        <img src="../assets/relay-fast-trip.png" alt="Serial monitor log: current rising past pickup to 192 mA, the trip timer filling to 100 percent, and the relay tripping">
+        <figcaption>Serial log — a 192 mA fault trips in ~1.1 s (the fast-trip row, live)</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ HARDWARE ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Hardware</span></div>
+      <figure class="figure figure--sm">
+        <img src="../assets/relay-bench.jpg" alt="The IDMT relay on the bench: Arduino Nano, INA219 current sensor, and opto-isolated relay module wired to a test load">
+        <figcaption>Bench build — Nano · INA219 · opto-isolated relay</figcaption>
+      </figure>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Controller</span><span class="v">Arduino Nano (ATmega328P)</span></div>
+        <div class="spec"><span class="k">Current sensor</span><span class="v">INA219 · I²C</span></div>
+        <div class="spec"><span class="k">Trip output</span><span class="v">2-channel opto-isolated relay</span></div>
+        <div class="spec"><span class="k">Test load</span><span class="v">DC bench supply + power resistor</span></div>
+        <div class="spec"><span class="k">Standard</span><span class="v">IEC 60255 / IEEE C37.112</span></div>
+        <div class="spec"><span class="k">Firmware</span><span class="v">Overcurrent_relay_arduino_logic.ino</span></div>
+      </div>
+    </section>
+
+    <!-- ============ FIRMWARE ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Firmware</span></div>
+      <div class="prose"><p>The heart of the relay: each loop it computes the IEC 60255 trip time for the measured current and integrates progress toward a trip, so it keeps monitoring while it times and backs off if the fault clears first.</p></div>
+      <div class="code-block">
+        <div class="cap">
+          <span>Overcurrent_relay_arduino_logic.ino — excerpt</span>
+          <a href="https://github.com/rileyhill625/overcurrent-relay">Full firmware ↗</a>
+        </div>
+        <pre><code>// Over pickup: run the IEC 60255 IDMT timer
+float M = current / I_PICKUP;              // multiple of pickup
+float denom = pow(M, A) - 1.0;
+if (denom &lt; 0.0001) denom = 0.0001;      // guard the near-pickup singularity
+float trip_time = TMS * (K / denom);      // IEC 60255 trip time (seconds)
+
+trip_accumulator += dt / trip_time;       // integrate progress toward a trip
+if (trip_accumulator &gt;= 1.0) {
+  digitalWrite(RELAY_PIN, LOW);           // open the contact — TRIP the load
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>Full firmware, both demo videos, high-resolution bench photos, and the complete serial logs are in the repository.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/overcurrent-relay">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ INTERACTIVE TRIP CURVE ============ -->
+  <script>
+    // ============================================================
+    //  IEC 60255 standard-inverse trip curve
+    //  t = TMS * k / ( (I / Ipickup)^a - 1 )
+    // ============================================================
+
+    // --- constants: the relay's fixed characteristic + lab data ---
+    const K = 0.14, A = 0.02;        // IEC standard-inverse curve constants
+    const IPICKUP = 100;             // mA — pickup setting
+    const MEASURED = [               // the three points measured on the bench
+      { i: 103, t: 20  },
+      { i: 134, t: 2.4 },
+      { i: 192, t: 1.1 },
+    ];
+
+    // --- plot geometry, in SVG coordinate units (viewBox is 600 x 400) ---
+    const W = 600, H = 400;
+    const M = { l: 55, r: 20, t: 20, b: 45 };  // margins around the plot area
+    const plotW = W - M.l - M.r;
+    const plotH = H - M.t - M.b;
+    const I_MIN = 100, I_MAX = 1000;   // x-axis range (mA), logarithmic
+    const T_MIN = 0.05, T_MAX = 100;   // y-axis range (s), logarithmic
+    const log10 = Math.log10;
+
+    // --- scale functions: convert engineering units -> pixel position ---
+    function xScale(i) {
+      return M.l + (log10(i) - log10(I_MIN)) / (log10(I_MAX) - log10(I_MIN)) * plotW;
+    }
+    function yScale(t) {
+      return M.t + (log10(T_MAX) - log10(t)) / (log10(T_MAX) - log10(T_MIN)) * plotH;
+    }
+
+    // --- the trip-time formula ---
+    function tripTime(i, tms) {
+      const mult = i / IPICKUP;
+      return tms * K / (Math.pow(mult, A) - 1);
+    }
+
+    // --- grab the page elements we need to read from and draw into ---
+    const svg      = document.getElementById('curve');
+    const slider   = document.getElementById('tms');
+    const readout  = document.getElementById('tms-val');
+
+    // --- build the whole plot as an SVG string, then draw it ---
+    function render() {
+      const tms = parseFloat(slider.value);   // read the slider (a string -> number)
+      readout.textContent = tms.toFixed(2);    // update the label next to the slider
+
+      let s = '';   // we'll accumulate SVG shapes into this string
+
+      // gridlines + tick labels
+      for (const i of [100, 200, 300, 500, 1000]) {
+        const x = xScale(i);
+        s += `<line class="curve-grid" x1="${x}" y1="${M.t}" x2="${x}" y2="${M.t + plotH}"/>`;
+        s += `<text class="curve-label" x="${x}" y="${H - 25}" text-anchor="middle">${i}</text>`;
+      }
+      for (const t of [0.1, 1, 10, 100]) {
+        const y = yScale(t);
+        s += `<line class="curve-grid" x1="${M.l}" y1="${y}" x2="${M.l + plotW}" y2="${y}"/>`;
+        s += `<text class="curve-label" x="${M.l - 8}" y="${y + 3}" text-anchor="end">${t}</text>`;
+      }
+
+      // axes + titles
+      s += `<line class="curve-axis" x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${M.t + plotH}"/>`;
+      s += `<line class="curve-axis" x1="${M.l}" y1="${M.t + plotH}" x2="${M.l + plotW}" y2="${M.t + plotH}"/>`;
+      s += `<text class="curve-label" x="${M.l + plotW / 2}" y="${H - 5}" text-anchor="middle">CURRENT (mA)</text>`;
+      s += `<text class="curve-label" transform="translate(14, ${M.t + plotH / 2}) rotate(-90)" text-anchor="middle">TRIP TIME (s)</text>`;
+
+      // pickup asymptote (vertical dashed line)
+      const xp = xScale(IPICKUP);
+      s += `<line class="curve-pickup" x1="${xp}" y1="${M.t}" x2="${xp}" y2="${M.t + plotH}"/>`;
+
+      // the theoretical curve: step across the current range, compute t at each point
+      let d = '';
+      for (let i = IPICKUP * 1.01; i <= I_MAX; i *= 1.03) {
+        let t = tripTime(i, tms);
+        if (t > T_MAX) continue;      // above the top of the chart, skip
+        if (t < T_MIN) t = T_MIN;     // below the bottom, clamp
+        const x = xScale(i), y = yScale(t);
+        d += (d === '' ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+      }
+      s += `<path class="curve-path" d="${d}"/>`;
+
+      // the measured points on top
+      for (const p of MEASURED) {
+        s += `<circle class="curve-point" cx="${xScale(p.i)}" cy="${yScale(p.t)}" r="5"/>`;
+      }
+
+      svg.innerHTML = s;   // draw everything at once
+    }
+
+    slider.addEventListener('input', render);  // redraw whenever the slider moves
+    render();                                   // draw once when the page loads
+  </script>
+
+</body>
+</html>
