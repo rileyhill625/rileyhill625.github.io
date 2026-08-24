@@ -25,11 +25,15 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+  <a class="skip-link" href="#top">Skip to content</a>
 
   <header class="nav">
     <div class="container nav__inner">
       <a class="nav__brand" href="#top">Riley Hill<span>.</span></a>
-      <nav class="nav__links">
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
         <a href="#projects">Projects</a>
         <a href="#skills">Skills</a>
         <a href="#about">About</a>
@@ -78,7 +82,7 @@
       </div>
     </section>
 
-    <section id="projects" class="section container">
+    <section id="projects" class="section container reveal">
     <div class="section__label"><span class="mono">Projects</span></div>
     <h2>Bridging the gap for P&amp;C and Renewables.</h2>
     <p class="section__intro">Protection &amp; control and renewables integration — analyzed in software, built in hardware, documented to standard.</p>
@@ -98,7 +102,8 @@
         <div><span class="n">5 projects</span><span class="l">Integrated</span></div>
       </div>
       <div class="capstone__links">
-        <a href="projects/greenfield-capstone.html">View project →</a>
+        <!-- was: <div class="capstone__links"><a href="projects/xxx.html">View project →</a></div> -->
+        <span class="capstone__soon">In planning — detail page coming</span>
       </div>
     </article>
 
@@ -115,7 +120,8 @@
         <div><span class="n">Both niches</span><span class="l">Fusion project</span></div>
       </div>
       <div class="capstone__links">
-        <a href="projects/interconnection-capstone.html">View project →</a>
+        <!-- was: <div class="capstone__links"><a href="projects/xxx.html">View project →</a></div> -->
+        <span class="capstone__soon">In planning — detail page coming</span>
       </div>
     </article>
 
@@ -318,7 +324,7 @@
     </div>
     </section>
 
-    <section id="skills" class="section container">
+    <section id="skills" class="section container reveal">
       <div class="section__label"><span class="mono">Skills &amp; Standards</span></div>
       <h2>The standards this work is built on.</h2>
       <p class="section__intro">Not a keyword list — every item below is something I've actually used to produce the work on this site.</p>
@@ -398,6 +404,11 @@
     </section>
     
   </main>
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="#top">Back to top ↑</a>
+  </footer>
 
+  <script src="main.js"></script>
 </body>
 </html>

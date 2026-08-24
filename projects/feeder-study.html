@@ -11,14 +11,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../styles.css" />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ============ NAV ============ -->
   <header class="nav">
     <div class="container nav__inner">
       <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
-      <nav class="nav__links">
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
         <a href="../index.html#projects">Projects</a>
         <a href="../index.html#skills">Skills</a>
         <a href="../index.html#about">About</a>
@@ -28,7 +35,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ============ HERO ============ -->
     <section class="detail-hero container">
@@ -42,7 +49,7 @@
     </section>
 
     <!-- ============ OBJECTIVE ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Objective</span></div>
       <div class="prose">
         <p>Protective device coordination and arc-flash studies are among the first tasks handed to a junior protection engineer, and they appear on nearly every P&amp;C job posting. This study performs all three core analyses directly from the underlying standards — the IDMT trip characteristic and the incident-energy model implemented in code rather than driven through a GUI — to demonstrate an understanding of <em>what</em> the analysis software computes, not just how to operate it.</p>
@@ -50,7 +57,7 @@
     </section>
 
     <!-- ============ THE MODELED FEEDER ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">The modeled feeder</span></div>
       <div class="prose">
         <p>A 12.47 kV feeder with a three-device protection hierarchy: a main breaker at the substation, a recloser on the main line, and a fuse protecting a lateral tap. Each device sits at its own bus, so the fault current <em>at that device's location</em> can be computed and used to set its protection.</p>
@@ -94,7 +101,7 @@
     </section>
 
     <!-- ============ METHOD ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">The three analyses</span></div>
       <div class="prose">
         <ol>
@@ -106,7 +113,7 @@
     </section>
 
     <!-- ============ COORDINATION ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Coordination</span></div>
       <div class="prose">
         <p>Every device follows the IEC 60255 standard-inverse characteristic, with pickup set above load and the time multiplier staggered to grade the devices in time:</p>
@@ -146,7 +153,7 @@
     </section>
 
     <!-- ============ ARC-FLASH HAZARD ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Arc-flash hazard</span></div>
       <div class="prose">
         <p>Applying the IEEE 1584 incident-energy model with each device's clearing time gives the hazard and required PPE at every location. The full study — fault current, clearing device, clearing time, incident energy, and PPE category:</p>
@@ -166,7 +173,7 @@
     </section>
 
     <!-- ============ TOOLS & STANDARDS ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
       <div class="spec-grid">
         <div class="spec"><span class="k">Short-circuit</span><span class="v">IEC 60909</span></div>
@@ -179,7 +186,7 @@
     </section>
 
     <!-- ============ REPOSITORY ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Repository</span></div>
       <div class="prose"><p>The complete Jupyter notebook — network model, short-circuit analysis, coordination, TCC plot, and arc-flash calculation, runnable top to bottom — plus the results CSV are in the repository.</p></div>
       <div class="card__links">
@@ -188,6 +195,12 @@
     </section>
 
   </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+    </footer>
+  <script src="../main.js"></script>
 
 </body>
 </html>

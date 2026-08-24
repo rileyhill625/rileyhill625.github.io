@@ -11,14 +11,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../styles.css" />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ============ NAV ============ -->
   <header class="nav">
     <div class="container nav__inner">
       <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
-      <nav class="nav__links">
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
         <a href="../index.html#projects">Projects</a>
         <a href="../index.html#skills">Skills</a>
         <a href="../index.html#about">About</a>
@@ -28,7 +35,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ============ HERO ============ -->
     <section class="detail-hero container">
@@ -42,7 +49,7 @@
     </section>
 
     <!-- ============ OBJECTIVE ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Objective</span></div>
       <div class="prose">
         <p>The overcurrent relay is the most fundamental protective device in a power system. This project implements one from the governing equation up: the same IEC 60255 inverse-time characteristic used to coordinate protective devices and set relay pickup in coordination studies — running here on real hardware, sensing real current.</p>
@@ -51,7 +58,7 @@
     </section>
 
     <!-- ============ HOW IT WORKS ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">How it works</span></div>
       <div class="prose">
         <ol>
@@ -65,7 +72,7 @@
     </section>
 
     <!-- ============ DEMONSTRATION ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Demonstration</span></div>
       <div class="prose"><p>The relay sensing an overcurrent and physically opening its contact to disconnect the load — the full sense → decide → trip chain, on hardware.</p></div>
       <figure class="figure figure--md">
@@ -78,7 +85,7 @@
     </section>
 
     <!-- ============ TRIP CHARACTERISTIC + INTERACTIVE CURVE ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Trip characteristic</span></div>
       <div class="prose">
         <p>The trip time follows the IEC 60255 standard-inverse curve — larger overcurrents trip faster, smaller ones trip slower:</p>
@@ -99,7 +106,7 @@
     </section>
 
     <!-- ============ RELAY SETTINGS ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Relay settings</span></div>
       <table class="data-table">
         <thead><tr><th>Setting</th><th>Value</th><th>Meaning</th></tr></thead>
@@ -112,7 +119,7 @@
     </section>
 
     <!-- ============ VALIDATION RESULTS ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Validation results</span></div>
       <div class="prose"><p>Tested across the full range of the trip characteristic. Trip time falling as current rises is the inverse-time behavior that defines an IDMT relay — confirmed on hardware.</p></div>
       <table class="data-table">
@@ -131,7 +138,7 @@
     </section>
 
     <!-- ============ HARDWARE ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Hardware</span></div>
       <figure class="figure figure--sm">
         <img src="../assets/relay-bench.jpg" alt="The IDMT relay on the bench: Arduino Nano, INA219 current sensor, and opto-isolated relay module wired to a test load">
@@ -148,7 +155,7 @@
     </section>
 
     <!-- ============ FIRMWARE ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Firmware</span></div>
       <div class="prose"><p>The heart of the relay: each loop it computes the IEC 60255 trip time for the measured current and integrates progress toward a trip, so it keeps monitoring while it times and backs off if the fault clears first.</p></div>
       <div class="code-block">
@@ -170,7 +177,7 @@ if (trip_accumulator &gt;= 1.0) {
     </section>
 
     <!-- ============ REPOSITORY ============ -->
-    <section class="block container">
+    <section class="block container reveal">
       <div class="section__label"><span class="mono">Repository</span></div>
       <div class="prose"><p>Full firmware, both demo videos, high-resolution bench photos, and the complete serial logs are in the repository.</p></div>
       <div class="card__links">
@@ -275,6 +282,12 @@ if (trip_accumulator &gt;= 1.0) {
     slider.addEventListener('input', render);  // redraw whenever the slider moves
     render();                                   // draw once when the page loads
   </script>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+  <script src="../main.js"></script>
 
 </body>
 </html>
