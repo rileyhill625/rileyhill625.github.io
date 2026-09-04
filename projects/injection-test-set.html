@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secondary Current Injection Test Set — Riley Hill</title>
+  <meta name="description" content="A programmable closed-loop current source (DAC, op-amp, MOSFET) built to commission a protective relay — commands a precise current, measures it independently, and trips the relay to verify it." />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Protection &amp; Control</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>Secondary Current Injection Test Set</h1>
+      <p class="detail-hero__lead">A programmable, closed-loop current source built to commission a protective relay — it commands a precise current, measures the delivered current independently, and injects it into the relay to verify it trips at the right threshold. The hardware equivalent of a relay commissioning tool, built from the analog fundamentals up.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>Secondary current injection is how protective relays are tested and commissioned in the field: a known current is forced into the relay to confirm its settings and trip behavior. Commercial test sets cost thousands. This project builds a working one from first principles — a feedback-regulated current source, commanded digitally — and then uses it to validate a real relay.</p>
+        <p>It demonstrates two things at once: analog circuit design (a current source is not the same as a voltage source), and an understanding of how relays are actually commissioned.</p>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">How it works</span></div>
+      <div class="prose">
+        <ol>
+          <li><strong>Command.</strong> A microcontroller sets a target current by outputting a reference voltage through an MCP4725 DAC.</li>
+          <li><strong>Regulate.</strong> An LM324 op-amp compares that reference to the voltage across a sense resistor and drives an IRLZ44N MOSFET until the two match — forcing the current to <code>V_command / R_sense</code>. This feedback loop is what makes it a <em>current source</em>: it holds the current constant even as supply voltage or load changes.</li>
+          <li><strong>Measure.</strong> An INA219 sensor independently measures the actual delivered current, so commanded and measured can be compared — closed-loop verification.</li>
+          <li><strong>Inject &amp; trip.</strong> The regulated current is injected into the protective relay, whose firmware runs an IEC 60255 inverse-time characteristic. Above pickup, the relay trips — validating it against a known, measured current.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ THE CURRENT-SOURCE LOOP ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The current-source loop</span></div>
+      <div class="prose">
+        <p>The heart of the design is a voltage-controlled current source: the op-amp continuously drives the MOSFET to hold the sense-resistor voltage equal to the commanded voltage, which pins the current regardless of what the load does.</p>
+      </div>
+      <div class="oneline">
+        <svg viewBox="0 0 680 200" role="img" aria-label="Control loop: an MCP4725 DAC sets a command voltage into an LM324 op-amp, which drives an IRLZ44N MOSFET to force current through the relay and a 10-ohm sense resistor measured by an INA219; the sense voltage feeds back to the op-amp to close the loop.">
+          <defs>
+            <marker id="arw" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 z" fill="#8b97a8"/>
+            </marker>
+          </defs>
+          <!-- DAC -->
+          <rect class="ol-node" x="18" y="40" width="120" height="54" rx="7"/>
+          <text class="ol-label" x="78" y="63" text-anchor="middle" style="font-size:11px;fill:var(--text);">MCP4725 DAC</text>
+          <text class="ol-label" x="78" y="80" text-anchor="middle">V_command</text>
+          <line class="ol-line" x1="138" y1="67" x2="176" y2="67" marker-end="url(#arw)"/>
+          <!-- op-amp -->
+          <rect class="ol-node ol-hot" x="180" y="40" width="136" height="54" rx="7"/>
+          <text class="ol-label" x="248" y="63" text-anchor="middle" style="font-size:11px;fill:var(--text);">LM324 OP-AMP</text>
+          <text class="ol-label" x="248" y="80" text-anchor="middle">compare + drive</text>
+          <line class="ol-line" x1="316" y1="67" x2="354" y2="67" marker-end="url(#arw)"/>
+          <!-- MOSFET -->
+          <rect class="ol-node" x="358" y="40" width="120" height="54" rx="7"/>
+          <text class="ol-label" x="418" y="63" text-anchor="middle" style="font-size:11px;fill:var(--text);">IRLZ44N</text>
+          <text class="ol-label" x="418" y="80" text-anchor="middle">pass element</text>
+          <line class="ol-line ol-flow" x1="478" y1="67" x2="516" y2="67" marker-end="url(#arw)"/>
+          <!-- current node -->
+          <rect class="ol-node" x="520" y="40" width="150" height="54" rx="7"/>
+          <text class="ol-label" x="595" y="60" text-anchor="middle" style="font-size:11px;fill:var(--text);">RELAY + 10Ω SENSE</text>
+          <text class="ol-label" x="595" y="78" text-anchor="middle">+ INA219 measure</text>
+          <!-- feedback loop -->
+          <path class="ol-line" d="M595 94 L595 145 L248 145 L248 96" fill="none" marker-end="url(#arw)"/>
+          <text class="ol-label" x="421" y="139" text-anchor="middle">V_sense feedback — closes the loop</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ DEMONSTRATION ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Demonstration</span></div>
+      <div class="prose"><p>Commanding a current, measuring it back, and driving the relay to trip — the full commissioning cycle running live.</p></div>
+      <figure class="figure figure--md">
+        <video controls preload="none" poster="../assets/injection-poster.jpg">
+          <source src="../assets/injection-demo.mp4" type="video/mp4">
+          Your browser can't play embedded video — the clip is in the repository.
+        </video>
+        <figcaption>Commissioning demo — commanded current injected and measured, driving the relay to trip</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ VERIFICATION ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Verification</span></div>
+      <div class="prose">
+        <p>With the INA219 measuring independently of the command, the loop's accuracy is directly checkable — commanded 50 mA holds at roughly 50.7–51.1 mA across a continuous stream of readings.</p>
+      </div>
+      <figure class="figure figure--sm">
+        <img src="../assets/injection-verification.png" loading="lazy" alt="Serial log: commanded 50.00 mA with measured values steady around 50.7 to 51.1 mA">
+        <figcaption>Commanded 50 mA vs. measured — holding within ~1%</figcaption>
+      </figure>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Test</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Commanded vs. measured</td><td>50 mA commanded → ~50.6 mA measured (~1%)</td></tr>
+            <tr><td>Supply independence</td><td>Current held constant as supply varied 12 V → 15 V</td></tr>
+            <tr><td>Relay commissioning</td><td>Injected current above pickup tripped the relay, faster at higher current</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p>Holding the current constant while the supply voltage changes is the definitive test of a <em>current</em> source — a voltage source would let the current drift with the load. That's the behavior that confirms the feedback loop is doing its job.</p>
+      </div>
+    </section>
+
+    <!-- ============ FIRMWARE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Firmware</span></div>
+      <div class="prose"><p>Setting the current is a two-step conversion: target current becomes a sense-resistor voltage (Ohm's law), which becomes a 12-bit DAC value. The op-amp does the rest.</p></div>
+      <div class="code-block">
+        <div class="cap">
+          <span>Proj_4_Current_Injection_test_set.ino — current command</span>
+          <a href="https://github.com/rileyhill625/current-injection-test-set">Full firmware ↗</a>
+        </div>
+        <pre><code>void setCurrent_mA(float target_mA) {
+  float command_voltage = (target_mA / 1000.0) * R_SENSE;  // V = I x R across the sense resistor
+  int dac_value = (int)((command_voltage / VCC) * 4095);   // scale to the 12-bit DAC (0-4095)
+  dac.setVoltage(dac_value, false);                        // op-amp then forces the current to match
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ============ THE CIRCUIT ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The circuit</span></div>
+      <figure class="figure figure--sm">
+        <img src="../assets/injection-bench.jpg" loading="lazy" alt="The current injection test set on the bench: Arduino Nano, MCP4725 DAC, LM324 op-amp, IRLZ44N MOSFET, sense resistor, and INA219 wired to the relay">
+        <figcaption>Bench build — the closed-loop current source and relay under test</figcaption>
+      </figure>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Command DAC</span><span class="v">MCP4725 · I²C</span></div>
+        <div class="spec"><span class="k">Feedback amp</span><span class="v">LM324 op-amp</span></div>
+        <div class="spec"><span class="k">Pass element</span><span class="v">IRLZ44N MOSFET</span></div>
+        <div class="spec"><span class="k">Sense resistor</span><span class="v">10 Ω · 2 W</span></div>
+        <div class="spec"><span class="k">Measurement</span><span class="v">INA219 (independent)</span></div>
+        <div class="spec"><span class="k">Controller</span><span class="v">Arduino Nano</span></div>
+      </div>
+    </section>
+
+    <!-- ============ DESIGN LESSONS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Design lessons</span></div>
+      <div class="prose">
+        <ol>
+          <li><strong>Gate drive matters.</strong> A "logic-level" MOSFET still needs adequate gate voltage — the op-amp had to run from a higher supply (~12 V) than the logic rail to drive the gate fully on.</li>
+          <li><strong>Op-amps have a floor.</strong> The LM324 can't regulate a signal too close to ground, so the sense resistor had to be sized so the feedback voltage sits comfortably inside the op-amp's usable range. A smaller resistor produced a near-ground signal it couldn't control.</li>
+          <li><strong>Shared reference.</strong> The current source and the measurement/logic need a common ground, or the op-amp is comparing voltages against different references and the loop never settles.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ TIES TO THE PORTFOLIO ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Ties to the portfolio</span></div>
+      <div class="prose">
+        <p>This test set exists to commission the <a href="idmt-relay.html" style="color:var(--maroon-hi);">hardware IDMT relay</a> — one instrument built to verify another. Together they show the full engineering cycle: design a protective relay, then build the test equipment that proves it works, exactly the way relays are commissioned in the field.</p>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>Firmware, the circuit photo, the commanded-vs-measured capture, and the trip demonstration video.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/current-injection-test-set">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+
+  <script src="../main.js"></script>
+
+</body>
+</html>

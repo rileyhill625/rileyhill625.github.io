@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Substation Protocol Gateway — Riley Hill</title>
+  <meta name="description" content="A Modbus TCP relay-to-SCADA telemetry system built from scratch in Python, plus a comparison study of Modbus, DNP3, and IEC 61850 GOOSE substation protocols." />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Protection &amp; Control</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>Substation Protocol Gateway</h1>
+      <p class="detail-hero__lead">The communication layer that ties a substation together — a Modbus TCP relay server, a SCADA monitor that polls it and applies protection logic, and a study of the three protocols a real substation runs on. Built from the ground up in Python, not configured through a vendor tool.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>A large part of P&amp;C and SCADA integration is getting field devices to talk to control systems — mapping a relay's data into a SCADA master and troubleshooting the link when it breaks. That work is far easier when you understand the protocol mechanics directly instead of treating a vendor's mapping tool as a black box.</p>
+        <p>This project builds a complete Modbus TCP system from scratch — a server that acts as a relay, a monitor that acts as the control room — so the underlying mechanics (registers, coils, scaling, addressing, polling versus events) are understood first-hand. A written study then extends that into DNP3 and IEC 61850 GOOSE, the other protocols a working substation depends on.</p>
+      </div>
+    </section>
+
+    <!-- ============ ARCHITECTURE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Architecture</span></div>
+      <div class="prose">
+        <p>A simulated relay serves live telemetry over Modbus TCP; a SCADA monitor polls it once a second and applies protection logic; a simulator writes changing values so the system behaves like a live feed. The same relay data is designed to flow onward to an Ignition HMI over OPC.</p>
+      </div>
+      <div class="oneline">
+        <svg viewBox="0 0 660 262" role="img" aria-label="Architecture: a data simulator writes values into a protective-relay Modbus TCP server, which a SCADA monitor polls once per second for alarms and events; the relay data also flows to an Ignition HMI over OPC.">
+          <defs>
+            <marker id="arw" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 z" fill="#8b97a8"/>
+            </marker>
+          </defs>
+
+          <!-- DATA SIM -->
+          <rect class="ol-node" x="24" y="86" width="140" height="64" rx="7"/>
+          <text class="ol-label" x="94" y="112" text-anchor="middle" style="font-size:11px;fill:var(--text);">DATA SIM</text>
+          <text class="ol-label" x="94" y="130" text-anchor="middle">writes live values</text>
+          <!-- sim -> relay -->
+          <line class="ol-line" x1="164" y1="118" x2="222" y2="118" marker-end="url(#arw)"/>
+          <text class="ol-label" x="193" y="108" text-anchor="middle">writes</text>
+
+          <!-- RELAY (server) -->
+          <rect class="ol-node ol-hot" x="228" y="86" width="176" height="64" rx="7"/>
+          <text class="ol-label" x="316" y="110" text-anchor="middle" style="font-size:11px;fill:var(--text);">PROTECTIVE RELAY</text>
+          <text class="ol-label" x="316" y="128" text-anchor="middle">Modbus server · :5020</text>
+          <!-- relay -> monitor (animated data flow) -->
+          <line class="ol-line ol-flow" x1="404" y1="118" x2="462" y2="118" marker-end="url(#arw)"/>
+          <text class="ol-label" x="433" y="108" text-anchor="middle">MODBUS TCP</text>
+
+          <!-- SCADA MONITOR -->
+          <rect class="ol-node" x="468" y="86" width="168" height="64" rx="7"/>
+          <text class="ol-label" x="552" y="110" text-anchor="middle" style="font-size:11px;fill:var(--text);">SCADA MONITOR</text>
+          <text class="ol-label" x="552" y="128" text-anchor="middle">poll · alarm · events</text>
+
+          <!-- relay -> ignition (dashed, downstream) -->
+          <line class="ol-line" x1="316" y1="150" x2="316" y2="194" stroke-dasharray="4 4" marker-end="url(#arw)"/>
+          <text class="ol-label" x="336" y="176" text-anchor="start">OPC</text>
+          <rect class="ol-node" x="230" y="196" width="172" height="48" rx="7" stroke-dasharray="4 4"/>
+          <text class="ol-label" x="316" y="217" text-anchor="middle" style="font-size:11px;fill:var(--text);">IGNITION HMI</text>
+          <text class="ol-label" x="316" y="233" text-anchor="middle">dashboard project</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ DATA MODEL ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The data model</span></div>
+      <div class="prose">
+        <p>Modbus stores data in typed slots — coils for single on/off bits, holding registers for 16-bit whole numbers. Since registers can't hold decimals, current is scaled by ten (39.5 A stored as 395 and divided back on read). The relay exposes three values:</p>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Address</th><th>Type</th><th>Holds</th><th>Encoding</th></tr></thead>
+          <tbody>
+            <tr><td class="num">Register 1</td><td>Holding register</td><td>Current</td><td>Amps ×10 (395 → 39.5 A)</td></tr>
+            <tr><td class="num">Register 2</td><td>Holding register</td><td>Voltage</td><td>Volts (12470)</td></tr>
+            <tr><td class="num">Coil 1</td><td>Coil</td><td>Breaker status</td><td>1 = closed, 0 = open (tripped)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p>A detail that trips up everyone new to Modbus: the client addresses these 0-based while the server stores them starting at 1 — the classic Modbus off-by-one. Handling that correctly is exactly the kind of real-world quirk this project exists to internalize.</p>
+      </div>
+    </section>
+
+    <!-- ============ THE SCADA MONITOR ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The SCADA monitor</span></div>
+      <div class="prose">
+        <p>The monitor is the control-room side: it polls the relay every second, classifies each reading against a pickup threshold, and — crucially — logs <em>state changes</em> as events rather than spamming every identical poll. That poll-then-classify-then-log-events pattern is the heart of what a real SCADA master does.</p>
+      </div>
+      <div class="code-block">
+        <div class="cap">
+          <span>03_scada_monitor.py — polling + protection logic</span>
+          <a href="https://github.com/rileyhill625/substation-protocol-gateway">Full code ↗</a>
+        </div>
+        <pre><code>PICKUP_A = 55.0   # pickup above load, below minimum fault — the protection window
+
+while True:                                    # a real monitor never stops
+    rr = await client.read_holding_registers(address=0, count=2)
+    rc = await client.read_coils(address=0, count=1)
+    current = rr.registers[0] / 10.0           # undo the x10 register scaling
+    breaker_closed = rc.bits[0]
+
+    if not breaker_closed:
+        status = "*** ALARM: BREAKER OPEN (relay tripped) ***"
+    elif current &gt; PICKUP_A:
+        status = f"!! WARNING: overcurrent {current} A &gt; pickup {PICKUP_A} A"
+    else:
+        status = f"OK  current={current} A"
+
+    # log CHANGES as events — not every identical poll
+    if last_breaker is not None and breaker_closed != last_breaker:
+        print(f"&gt;&gt; EVENT: breaker -&gt; {'CLOSED' if breaker_closed else 'OPEN'}")
+    last_breaker = breaker_closed
+    print(status)
+    await asyncio.sleep(1)                      # poll every second</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="cap"><span>Example monitor output</span></div>
+        <pre><code>SCADA monitor connected. Polling relay every 1s...
+
+OK  current=39.5 A  voltage=12470 V
+OK  current=42.0 A  voltage=12470 V
+OK  current=38.5 A  voltage=12470 V
+  &gt;&gt; EVENT: breaker changed to OPEN
+*** ALARM: BREAKER OPEN (relay tripped) ***
+  &gt;&gt; EVENT: breaker changed to CLOSED
+OK  current=40.5 A  voltage=12470 V</code></pre>
+      </div>
+    </section>
+
+    <!-- ============ PROTOCOL COMPARISON ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Protocol comparison</span></div>
+      <div class="prose">
+        <p>Modbus is one of three protocols a real substation relies on, each suited to a different job. The written study compares them; the essentials:</p>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Protocol</th><th>Model</th><th>Timestamping / SOE</th><th>Speed</th><th>Typical use</th></tr></thead>
+          <tbody>
+            <tr><td>Modbus</td><td>Polling — master asks</td><td>None (poll snapshots)</td><td>Moderate</td><td>Simple device telemetry</td></tr>
+            <tr><td>DNP3</td><td>Event-driven reporting</td><td>Yes — sequence-of-events</td><td>Efficient over WAN</td><td>Wide-area utility SCADA</td></tr>
+            <tr><td>IEC 61850 GOOSE</td><td>Publish/subscribe, Layer 2</td><td>Event-driven</td><td>Very fast (&lt; 4 ms)</td><td>Protection signaling between IEDs</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p><strong>The key distinction:</strong> DNP3's advantage over Modbus isn't raw speed — it's <em>event capture</em>. DNP3 timestamps changes and reports them unsolicited, so a control center gets an ordered sequence-of-events (what happened, and exactly when), where Modbus only ever returns a snapshot of the moment it was polled. GOOSE is a different animal entirely: fast Layer-2 peer-to-peer messaging for protection devices to trip each other in milliseconds.</p>
+        <p style="font-size:.88rem;">Note: DNP3 and GOOSE are documented conceptually rather than implemented, because in practice they're deployed through C++ stacks (OpenDNP3, libiec61850) or vendor tools — the maintained Python libraries are limited or unmaintained. Building Modbus fully in code and studying the other two as they're actually deployed is the honest, useful split.</p>
+      </div>
+    </section>
+
+    <!-- ============ TIES TO THE PORTFOLIO ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Ties to the portfolio</span></div>
+      <div class="prose">
+        <p>The relay this gateway simulates is the software mirror of the <a href="idmt-relay.html" style="color:var(--maroon-hi);">hardware IDMT relay</a>, and the pickup threshold in the monitor follows the same above-load / below-fault logic staged across devices in the <a href="feeder-study.html" style="color:var(--maroon-hi);">feeder coordination study</a>. The live data it serves is what the Ignition SCADA dashboard consumes over OPC — connecting field device, protocol, and control room into one working system.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & STANDARDS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Protocol (built)</span><span class="v">Modbus TCP · pymodbus</span></div>
+        <div class="spec"><span class="k">Protocols (studied)</span><span class="v">DNP3 (IEEE 1815) · IEC 61850 GOOSE</span></div>
+        <div class="spec"><span class="k">Architecture</span><span class="v">Server · client · polling monitor · simulator</span></div>
+        <div class="spec"><span class="k">Concurrency</span><span class="v">Python asyncio</span></div>
+        <div class="spec"><span class="k">Language</span><span class="v">Python 3.11 (pcenv)</span></div>
+        <div class="spec"><span class="k">Downstream</span><span class="v">Ignition Perspective (OPC)</span></div>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>The full Modbus stack — server, client, continuous SCADA monitor, and data simulator — plus the protocol-comparison study.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/substation-protocol-gateway">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+
+  <script src="../main.js"></script>
+
+</body>
+</html>

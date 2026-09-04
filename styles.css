@@ -214,17 +214,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: 2rem;
   margin-bottom: 3rem;
 }
-.capstone {
-  --accent: var(--maroon-hi);              /* local niche token, same trick as .card */
-  position: relative;                      /* anchor for the accent bar below */
-  overflow: hidden;                        /* clip the bar to the rounded corners */
-  display: flex; flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 2rem;
-  transition: border-color .2s ease, transform .2s ease;
-}
+.capstones { grid-template-columns: 1fr; }
 .capstone--pc     { --accent: var(--maroon-hi); }
 .capstone--bridge { --accent: var(--renew); }
 

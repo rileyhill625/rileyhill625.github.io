@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCADA Monitoring Dashboard — Riley Hill</title>
+  <meta name="description" content="A live SCADA HMI built in Ignition Perspective that reads a protective relay over Modbus TCP through OPC tags and raises alarms on fault conditions." />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Protection &amp; Control</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>SCADA Monitoring Dashboard</h1>
+      <p class="detail-hero__lead">The control-room view — a live SCADA HMI built in Ignition Perspective that reads a protective relay over Modbus TCP, displays its current, voltage, and breaker state on an operator dashboard, and raises an alarm the instant a fault appears.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>SCADA is how a substation is watched and controlled from a distance. Building the HMI — connecting to field devices, mapping their data into tags, and laying out operator screens with alarms — is core SCADA integration work, and it's done on real platforms, not generic tools.</p>
+        <p>This project does exactly that on Ignition, one of the industry's leading SCADA platforms: it connects to a protective-relay simulation over Modbus, maps the relay's registers into OPC tags, and presents them the way a control room would — a gauge, a breaker indicator, and a live overcurrent alarm.</p>
+      </div>
+    </section>
+
+    <!-- ============ ARCHITECTURE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Architecture</span></div>
+      <div class="prose">
+        <p>The data path runs from the relay all the way to the operator screen. Ignition connects to the Modbus device, OPC tags name and scale each value, and the Perspective view binds its components to those tags.</p>
+      </div>
+      <div class="oneline">
+        <svg viewBox="0 0 680 110" role="img" aria-label="Data flow: a relay Modbus TCP server connects to an Ignition Modbus device, which maps registers to OPC tags, which feed a Perspective dashboard.">
+          <defs>
+            <marker id="arw" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 z" fill="#8b97a8"/>
+            </marker>
+          </defs>
+          <rect class="ol-node ol-hot" x="12" y="30" width="150" height="56" rx="7"/>
+          <text class="ol-label" x="87" y="54" text-anchor="middle" style="font-size:11px;fill:var(--text);">RELAY</text>
+          <text class="ol-label" x="87" y="71" text-anchor="middle">Modbus TCP server</text>
+          <line class="ol-line ol-flow" x1="162" y1="58" x2="180" y2="58" marker-end="url(#arw)"/>
+          <rect class="ol-node" x="184" y="30" width="150" height="56" rx="7"/>
+          <text class="ol-label" x="259" y="54" text-anchor="middle" style="font-size:11px;fill:var(--text);">IGNITION</text>
+          <text class="ol-label" x="259" y="71" text-anchor="middle">Modbus device</text>
+          <line class="ol-line" x1="334" y1="58" x2="352" y2="58" marker-end="url(#arw)"/>
+          <rect class="ol-node" x="356" y="30" width="126" height="56" rx="7"/>
+          <text class="ol-label" x="419" y="54" text-anchor="middle" style="font-size:11px;fill:var(--text);">OPC TAGS</text>
+          <text class="ol-label" x="419" y="71" text-anchor="middle">register → tag, scaled</text>
+          <line class="ol-line" x1="482" y1="58" x2="500" y2="58" marker-end="url(#arw)"/>
+          <rect class="ol-node" x="504" y="30" width="164" height="56" rx="7"/>
+          <text class="ol-label" x="586" y="54" text-anchor="middle" style="font-size:11px;fill:var(--text);">PERSPECTIVE HMI</text>
+          <text class="ol-label" x="586" y="71" text-anchor="middle">gauge · indicator · alarm</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ THE DASHBOARD ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The dashboard</span></div>
+      <div class="prose">
+        <p>The HMI updates live as a simulator varies the relay's current. Under normal load the gauge sits low and the breaker reads green; when the current spikes past pickup, the reading jumps and the indicator flips to a red tripped state — the operator's cue that a fault has been cleared.</p>
+      </div>
+      <div class="media-2">
+        <figure class="figure">
+          <img src="../assets/scada-closed.png" loading="lazy" alt="Ignition dashboard in normal state: current gauge at 41.8 A, 12,470 V, and a green CLOSED breaker indicator">
+          <figcaption>Normal — 41.8 A, breaker CLOSED (green)</figcaption>
+        </figure>
+        <figure class="figure">
+          <img src="../assets/scada-open.png" loading="lazy" alt="Ignition dashboard in fault state: current gauge at 66.6 A and a red OPEN breaker indicator">
+          <figcaption>Fault — 66.6 A, breaker OPEN (red)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ LIVE DEMO ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Live demo</span></div>
+      <div class="prose"><p>The dashboard reacting in real time as the relay's current changes — the gauge tracking, the indicator flipping, the alarm firing on overcurrent.</p></div>
+      <figure class="figure figure--md">
+        <video controls preload="none" poster="../assets/scada-poster.jpg">
+          <source src="../assets/scada-demo.mp4" type="video/mp4">
+          Your browser can't play embedded video — the clip is in the repository.
+        </video>
+        <figcaption>Live HMI responding to changing relay data over Modbus/OPC</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ HOW IT'S BOUND ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">How it's bound</span></div>
+      <div class="prose">
+        <p>Each component is bound to an OPC tag that maps a Modbus register or coil into Ignition. Current is linearly scaled to undo the ×10 register encoding; the breaker indicator and overcurrent alarm are driven by expression bindings.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Component</th><th>Shows</th><th>Binding</th></tr></thead>
+          <tbody>
+            <tr><td>Radial gauge</td><td>Current (A)</td><td>OPC tag, linear scale (÷10)</td></tr>
+            <tr><td>Numeric display</td><td>Voltage (V)</td><td>OPC tag</td></tr>
+            <tr><td>Status indicator</td><td>Breaker state</td><td>Expression — green closed / red open</td></tr>
+            <tr><td>Alarm</td><td>Overcurrent</td><td>Expression on the pickup threshold</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="figure figure--sm">
+        <img src="../assets/scada-tags.png" loading="lazy" alt="Ignition tag browser showing OPC tags mapped from the relay's Modbus registers and coil">
+        <figcaption>OPC tags mapping the relay's Modbus registers and coil</figcaption>
+      </figure>
+      <div class="prose">
+        <p>A practical detail that has to be right: an OPC tag needs both its item path <em>and</em> its OPC server specified, and Modbus addressing is 1-based on the device side — the same off-by-one that shows up throughout industrial comms.</p>
+      </div>
+    </section>
+
+    <!-- ============ TIES TO THE PORTFOLIO ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Ties to the portfolio</span></div>
+      <div class="prose">
+        <p>This dashboard consumes the exact Modbus data served by the <a href="protocol-gateway.html" style="color:var(--maroon-hi);">substation protocol gateway</a> — Ignition reads the same registers that project exposes, closing an end-to-end loop: a simulated relay serving data over Modbus, monitored on a real SCADA HMI. The overcurrent threshold traces back to the pickup logic in the <a href="feeder-study.html" style="color:var(--maroon-hi);">feeder coordination study</a>. Field device, protocol, and control room — one system.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & STANDARDS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Platform</span><span class="v">Ignition Perspective</span></div>
+        <div class="spec"><span class="k">Device driver</span><span class="v">Modbus TCP</span></div>
+        <div class="spec"><span class="k">Data model</span><span class="v">OPC tags · linear scaling</span></div>
+        <div class="spec"><span class="k">Logic</span><span class="v">Expression bindings (alarm, indicator)</span></div>
+        <div class="spec"><span class="k">Data source</span><span class="v">Modbus server (Python)</span></div>
+        <div class="spec"><span class="k">Displays</span><span class="v">Gauge · numeric · indicator · alarm</span></div>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>The Ignition project export, tag configuration, dashboard screenshots in both states, and the live demo video.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/scada-dashboard">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+
+  <script src="../main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grid-Connected Solar PV — Riley Hill</title>
+  <meta name="description" content="A Python/pandapower hosting-capacity study: how much rooftop solar a 12.47 kV feeder can absorb, what limit stops it, and how IEEE 1547 volt-var inverter control changes the answer." />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="detail-hero container" style="--accent: var(--renew);">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Renewables Integration</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>Grid-Connected Solar PV Impact Study</h1>
+      <p class="detail-hero__lead">How much rooftop solar a distribution feeder can actually absorb — and what stops it first, voltage or thermal limits. A Python/pandapower hosting-capacity study that sweeps PV penetration to failure and shows how IEEE 1547 smart-inverter control changes the ceiling.</p>
+    </section>
+
+    <!-- ============ OBJECTIVE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>As rooftop solar spreads, every distribution feeder hits a point where it can't take any more — voltage climbs too high somewhere, or the lines carry more backfed power than they're rated for. Finding that ceiling, and knowing which limit you'll hit first, is the core question of interconnection engineering, the single most in-demand skill utilities hire renewables engineers for.</p>
+        <p>This study builds a feeder from scratch, floods it with increasing solar, and reads off the hosting capacity for four scenarios — two ways of siting the PV, and two inverter behaviors — to answer not just <em>how much</em> fits, but <em>what breaks</em>, and <em>whether smart inverters help.</em></p>
+      </div>
+    </section>
+
+    <!-- ============ THE PHYSICS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The physics</span></div>
+      <div class="prose">
+        <p>Picture the feeder as a water pipe running down a street, with houses tapping off it. Voltage is pressure — highest at the substation, dropping with distance as each house draws load. Give the houses solar and each becomes a small pump pushing water <em>back</em> into the pipe; where a house pushes in more than it uses, local pressure rises instead of drops. Enough of that, and the pressure climbs past what the equipment can take.</p>
+        <p>Formally, the voltage change along a segment is:</p>
+        <div class="equation">ΔV ≈ (P·R + Q·X) / V</div>
+        <p>When solar pushes real power (P) back toward the substation, that term flips sign and voltage rises. Distribution feeders have a high resistance-to-reactance ratio, so the real-power term dominates — which is exactly why voltage rise from solar is a <em>distribution-level</em> problem, not a transmission one.</p>
+      </div>
+    </section>
+
+    <!-- ============ THE MODELED FEEDER ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The modeled feeder</span></div>
+      <div class="prose">
+        <p>A radial 12.47 kV feeder fed from a 138 kV source through a 25 MVA substation transformer: eight 0.5 km line segments (4 km total), with 0.6 MW of load at each of eight buses (4.8 MW total). Solar is added as inverter injections at each bus. With no PV, voltage declines smoothly to 0.980 pu at the far end — comfortably within limits, and a hand calculation of the first segment's drop matched the solver within 1.6%.</p>
+      </div>
+      <div class="oneline">
+        <svg viewBox="0 0 660 190" role="img" aria-label="Radial feeder: 138 kV source, 25 MVA transformer, 12.47 kV bus, and a 4 km feeder with eight buses each carrying 0.6 MW of load and rooftop solar.">
+          <circle class="ol-node ol-hot" cx="38" cy="70" r="13"/>
+          <text class="ol-label" x="38" y="98" text-anchor="middle">138 kV</text>
+          <line class="ol-line ol-hot" x1="51" y1="70" x2="100" y2="70"/>
+          <circle class="ol-node" cx="118" cy="63" r="12"/>
+          <circle class="ol-node" cx="118" cy="77" r="12"/>
+          <text class="ol-label" x="118" y="104" text-anchor="middle">25 MVA</text>
+          <line class="ol-line" x1="130" y1="70" x2="180" y2="70"/>
+          <line class="ol-bus" x1="180" y1="48" x2="180" y2="92"/>
+          <text class="ol-label" x="180" y="40" text-anchor="middle">12.47 kV</text>
+          <line class="ol-line" x1="180" y1="70" x2="600" y2="70"/>
+          <!-- representative taps: load down, PV up -->
+          <g>
+            <!-- tap template repeated -->
+            <line class="ol-line" x1="250" y1="70" x2="250" y2="92"/><path class="ol-line" d="M244 92 h12 l-6 10 z" fill="#8b97a8"/>
+            <line class="ol-line" x1="250" y1="70" x2="250" y2="46"/><circle cx="250" cy="40" r="6" fill="#ffb82e"/>
+            <line class="ol-line" x1="340" y1="70" x2="340" y2="92"/><path class="ol-line" d="M334 92 h12 l-6 10 z" fill="#8b97a8"/>
+            <line class="ol-line" x1="340" y1="70" x2="340" y2="46"/><circle cx="340" cy="40" r="6" fill="#ffb82e"/>
+            <line class="ol-line" x1="430" y1="70" x2="430" y2="92"/><path class="ol-line" d="M424 92 h12 l-6 10 z" fill="#8b97a8"/>
+            <line class="ol-line" x1="430" y1="70" x2="430" y2="46"/><circle cx="430" cy="40" r="6" fill="#ffb82e"/>
+            <line class="ol-line" x1="520" y1="70" x2="520" y2="92"/><path class="ol-line" d="M514 92 h12 l-6 10 z" fill="#8b97a8"/>
+            <line class="ol-line" x1="520" y1="70" x2="520" y2="46"/><circle cx="520" cy="40" r="6" fill="#ffb82e"/>
+          </g>
+          <text class="ol-label" x="600" y="60" text-anchor="end">4 km · 8 buses</text>
+          <text class="ol-label" x="385" y="128" text-anchor="middle">0.6 MW load + rooftop PV per bus  ·  ▲ load   ● solar</text>
+        </svg>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/solar-baseline-profile.png" loading="lazy" alt="Baseline voltage profile declining from the substation to 0.98 pu at the feeder end, within the ANSI service band">
+        <figcaption>Baseline voltage profile — no PV, within the ANSI 0.95–1.05 pu band</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ METHOD ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Method</span></div>
+      <div class="prose">
+        <ol>
+          <li>Solve the baseline power flow with no PV as the control case.</li>
+          <li>Add PV and <strong>sweep penetration</strong> (total PV ÷ total load) from 0% to 350%, recording the highest bus voltage and the busiest line at each step.</li>
+          <li>Read off <strong>hosting capacity</strong> — the first penetration that breaks either the 1.05 pu voltage limit or 100% line loading.</li>
+          <li>Repeat for two PV placements (spread across every bus vs. concentrated at the feeder end) and two inverter modes (unity power factor vs. IEEE 1547 volt-var).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Results</span></div>
+      <figure class="figure figure--md">
+        <img src="../assets/solar-hosting-capacity.png" loading="lazy" alt="Bar chart of hosting capacity for four scenarios: distributed cases ~13.5 MW thermal-limited, concentrated unity 8.4 MW voltage-limited, concentrated volt-var 9.6 MW thermal-limited">
+        <figcaption>Hosting capacity by scenario — color shows which limit binds</figcaption>
+      </figure>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>PV placement</th><th>Inverter</th><th>Hosting capacity</th><th>What breaks first</th></tr></thead>
+          <tbody>
+            <tr><td>Distributed (rooftop)</td><td>Unity PF</td><td class="num">13.7 MW</td><td>Thermal (lines overload)</td></tr>
+            <tr><td>Distributed (rooftop)</td><td>Volt-var</td><td class="num">13.4 MW</td><td>Thermal</td></tr>
+            <tr><td>Concentrated (feeder end)</td><td>Unity PF</td><td class="num">8.4 MW</td><td>Voltage (over 1.05 pu)</td></tr>
+            <tr><td>Concentrated (feeder end)</td><td>Volt-var</td><td class="num">9.6 MW</td><td>Thermal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ FINDING 1 ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Finding 1 — siting decides everything</span></div>
+      <div class="prose">
+        <p>Hosting capacity isn't one number. Spread the solar across the feeder and no single point over-voltages — but all the backfed power piles into the main line near the substation and overloads it, a <strong>thermal</strong> limit at ~13.7 MW. Put the same solar as one plant at the weak far end and the voltage there spikes long before the lines fill up, a <strong>voltage</strong> limit at just ~8.4 MW. Same feeder, same total solar, nearly double the capacity depending only on where it sits.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/solar-distributed-hc.png" loading="lazy" alt="Distributed PV sweep: max bus voltage and max line loading vs penetration, with line loading reaching 100% before voltage reaches 1.05 pu">
+        <figcaption>Distributed PV — line loading hits 100% before voltage hits its limit</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ FINDING 2 ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Finding 2 — volt-var solves voltage, not thermal</span></div>
+      <div class="prose">
+        <p>IEEE 1547 volt-var control lets inverters absorb reactive power when local voltage runs high, pulling it back down. On the voltage-limited concentrated case, that bought ~14% more capacity (8.4 → 9.6 MW) and flipped the binding limit to thermal. But on the already thermal-limited distributed feeder, it erased the voltage rise and added <em>no</em> capacity at all — absorbing reactive power just puts more current on lines that were already the bottleneck. You can't reactive-power your way out of overloaded wires.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/solar-concentrated-vv.png" loading="lazy" alt="Concentrated PV: volt-var holds max voltage below the 1.05 limit further than unity power factor, pushing the voltage limit to higher penetration">
+        <figcaption>Concentrated PV — volt-var holds voltage down, pushing the limit out</figcaption>
+      </figure>
+      <div class="code-block">
+        <div class="cap">
+          <span>solar-pv.ipynb — IEEE 1547 volt-var control</span>
+          <a href="https://github.com/rileyhill625/grid-connected-solar-pv">Full notebook ↗</a>
+        </div>
+        <pre><code>def volt_var_q(vm, p_mw):
+    # IEEE 1547-2018 Cat B: absorb reactive power when local voltage is high
+    S = p_mw / 0.9                          # inverter sized with ~10% var headroom
+    q_max = sqrt(max(S**2 - p_mw**2, 0))    # vars available without exceeding rating
+    if vm &lt;= 1.02: return 0.0               # deadband — do nothing
+    if vm &gt;= 1.08: return -q_max            # full absorption
+    return -(vm - 1.02) / 0.06 * q_max      # linear ramp between</code></pre>
+      </div>
+    </section>
+
+    <!-- ============ SCOPE ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Scope &amp; honest framing</span></div>
+      <div class="prose">
+        <p>This is a balanced, positive-sequence, single-snapshot simulation study built to demonstrate the hosting-capacity and inverter-control method. It is <strong>not</strong> a certified interconnection study: it doesn't model phase imbalance, time-of-day PV and load profiles, protection coordination, or utility-specific planning criteria, and the feeder is a representative model rather than a real utility circuit.</p>
+      </div>
+    </section>
+
+    <!-- ============ TIES TO THE PORTFOLIO ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Ties to the portfolio</span></div>
+      <div class="prose">
+        <p>This study is the renewables counterpart to the <a href="feeder-study.html" style="color:var(--renew);">feeder protection work</a> — the same class of distribution feeder, viewed through hosting capacity instead of fault coordination. It also sets up the crown-jewel next step: an <strong>IBR protection</strong> study, where the inverter-based sources modeled here collide with the overcurrent protection modeled there. That project is where both of my niches meet — the reason to go deep in protection <em>and</em> renewables.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & STANDARDS ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Interconnection</span><span class="v">IEEE 1547-2018 (volt-var)</span></div>
+        <div class="spec"><span class="k">Voltage limits</span><span class="v">ANSI C84.1</span></div>
+        <div class="spec"><span class="k">Modeling</span><span class="v">pandapower 3.5.4</span></div>
+        <div class="spec"><span class="k">Method</span><span class="v">Penetration sweep · hosting capacity</span></div>
+        <div class="spec"><span class="k">Control</span><span class="v">Damped fixed-point Q↔V</span></div>
+        <div class="spec"><span class="k">Language</span><span class="v">Python · numpy · matplotlib</span></div>
+      </div>
+    </section>
+
+    <!-- ============ REPOSITORY ============ -->
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>The full annotated notebook — feeder model, baseline check, penetration sweeps for all four scenarios, and the plots — is in the repository.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625/grid-connected-solar-pv">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+
+  <script src="../main.js"></script>
+
+</body>
+</html>
