@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battery Storage Dispatch — Riley Hill</title>
+  <meta name="description" content="A time-series battery energy storage (BESS) dispatch study on a solar-heavy distribution feeder: charging the midday solar surge and shaving the evening peak to flatten the net-load duck curve." />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="../index.html">Riley Hill<span>.</span></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav__links" id="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#skills">Skills</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../assets/resume.pdf">Résumé ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="detail-hero container" style="--accent: var(--renew);">
+      <a class="back-link" href="../index.html#projects">← All projects</a>
+      <div class="detail-hero__meta">
+        <span class="tag">Renewables Integration</span>
+        <span class="status status--done">Complete</span>
+      </div>
+      <h1>Battery Storage Dispatch &amp; Control</h1>
+      <p class="detail-hero__lead">What a battery does for a solar-saturated feeder, hour by hour. A time-series dispatch study that charges a battery on the midday solar surge — killing the over-voltage the solar study found — and discharges it into the evening peak, flattening the net-load "duck curve" with one device.</p>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Objective</span></div>
+      <div class="prose">
+        <p>The solar hosting-capacity study answered "how much fits." This one answers "what do you do about it." A feeder loaded with solar has two opposite problems at opposite ends of the day: too much power flowing backward at midday (over-voltage), and too much demand in the evening after the sun sets (peak load). A battery, dispatched intelligently, can solve both — and battery storage is the fastest-growing subsector in grid-scale power.</p>
+        <p>This is a quasi-static time-series simulation: the feeder is solved at every hour of a representative day, with a rule-based controller deciding when the battery charges and discharges.</p>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The setup</span></div>
+      <div class="prose">
+        <p>The same canonical 12.47 kV feeder as the solar study (4.8 MW peak load), now carrying 12 MW of distributed PV — near its hosting limit, so midday genuinely stresses it. A 5 MW / 24 MWh battery is distributed across the feeder. Representative daily profiles drive it: a solar bell peaking at noon, and load peaking in the evening.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/r2-daily-profiles.png" loading="lazy" alt="Normalized daily curves: solar peaking at midday, load peaking in the evening">
+        <figcaption>Representative daily profiles — solar peaks at noon, load peaks in the evening</figcaption>
+      </figure>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">The controller</span></div>
+      <div class="prose">
+        <p>A rule-based <strong>setpoint-band</strong> controller keeps the power exchanged with the grid inside a chosen window — roughly −4 MW (export) to +2.5 MW (import). When midday solar would push more than 4 MW backward, the battery charges the excess; when the evening peak would pull more than 2.5 MW, it discharges. State of charge is integrated hour by hour with round-trip efficiency and capacity limits.</p>
+        <div class="equation">SOC(t+1) = SOC(t) + P<sub>charge</sub>·η·Δt − P<sub>discharge</sub>/η·Δt</div>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Results</span></div>
+      <div class="prose">
+        <p>One battery fixes a voltage problem and a demand problem at opposite ends of the day. Charging the midday surplus caps the reverse flow and pulls the over-voltage back under limit; discharging into the evening shaves the peak.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/r2-before-after.png" loading="lazy" alt="Two panels: grid power at the substation and max feeder voltage, each with and without the battery. The battery reduces midday reverse power and evening import, and pulls midday voltage below the 1.05 pu limit.">
+        <figcaption>Before vs. after the battery — grid power (left) and max feeder voltage (right)</figcaption>
+      </figure>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th>No battery</th><th>With battery</th></tr></thead>
+          <tbody>
+            <tr><td>Midday max voltage</td><td class="num">1.054 pu (over limit)</td><td class="num">1.032 pu (within limit)</td></tr>
+            <tr><td>Midday reverse flow</td><td class="num">8.8 MW</td><td class="num">4.2 MW (capped)</td></tr>
+            <tr><td>Evening peak grid draw</td><td class="num">4.9 MW</td><td class="num">2.9 MW (~40% shave)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">State of charge</span></div>
+      <div class="prose">
+        <p>The battery's day tells the story: empty in the morning, charging through the midday solar surge, then discharging into the evening peak. It doesn't fully cycle — some reserve energy is left at day's end, which is a real dispatch and sizing trade-off (tightening the import cap would use more of it), not a modeling error.</p>
+      </div>
+      <figure class="figure figure--md">
+        <img src="../assets/r2-soc.png" loading="lazy" alt="Battery state of charge over the day: rising through midday, falling in the evening, ending with reserve energy">
+        <figcaption>State of charge — charge midday, discharge evening, reserve left over</figcaption>
+      </figure>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">New skills demonstrated</span></div>
+      <div class="prose">
+        <ol>
+          <li><strong>Time-series simulation.</strong> Solving the feeder across every hour of a day, rather than a single snapshot — the quasi-static method behind real dispatch studies.</li>
+          <li><strong>State of charge as a cross-time integrator.</strong> The battery links one hour to the next; energy, not just power, has to balance over the day.</li>
+          <li><strong>Rule-based dispatch control.</strong> A setpoint-band controller translating a grid-power target into charge/discharge commands.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Ties to the portfolio</span></div>
+      <div class="prose">
+        <p>This is the sequel to the <a href="solar-pv.html" style="color:var(--renew);">solar hosting-capacity study</a>: that project found the over-voltage problem, and this one solves it with storage. Same feeder, one narrative — solar creates the problem, storage manages it, and the <strong>IBR protection</strong> study ahead tackles how these inverter-based sources break the protective relaying modeled in the <a href="feeder-study.html" style="color:var(--renew);">coordination study</a>. Three renewables projects and three protection projects, one connected system.</p>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Tools &amp; standards</span></div>
+      <div class="spec-grid">
+        <div class="spec"><span class="k">Simulation</span><span class="v">Time-series / quasi-static power flow</span></div>
+        <div class="spec"><span class="k">Modeling</span><span class="v">pandapower storage element</span></div>
+        <div class="spec"><span class="k">Control</span><span class="v">Rule-based setpoint-band dispatch</span></div>
+        <div class="spec"><span class="k">Limits</span><span class="v">ANSI C84.1 · round-trip efficiency</span></div>
+        <div class="spec"><span class="k">Application</span><span class="v">Peak shaving · duck-curve flattening</span></div>
+        <div class="spec"><span class="k">Language</span><span class="v">Python · numpy · matplotlib</span></div>
+      </div>
+    </section>
+
+    <section class="block container reveal">
+      <div class="section__label"><span class="mono">Repository</span></div>
+      <div class="prose"><p>The time-series notebook — feeder model, daily profiles, dispatch controller, and the before/after and state-of-charge plots — is on GitHub.</p></div>
+      <div class="card__links">
+        <a href="https://github.com/rileyhill625">View on GitHub ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer container">
+    <span class="mono">© 2026 Riley Hill</span>
+    <a href="../index.html#projects">← All projects</a>
+  </footer>
+
+  <script src="../main.js"></script>
+
+</body>
+</html>

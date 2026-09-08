@@ -227,6 +227,14 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(90deg, var(--maroon-hi), var(--renew));  /* the fusion */
 }
 
+/* flagship capstone — make it the standout element on the page */
+.capstone--bridge {
+  border-color: color-mix(in srgb, var(--renew) 32%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--maroon-hi) 22%, transparent),
+              0 14px 44px -20px color-mix(in srgb, var(--maroon-hi) 65%, transparent);
+}
+.capstone--bridge::before { height: 4px; }
+
 .capstone__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .9rem; }
 .capstone__eyebrow { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
 .capstone h3 { font-size: 1.6rem; margin-bottom: .7rem; }
